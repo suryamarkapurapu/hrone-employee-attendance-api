@@ -1,24 +1,24 @@
 ﻿# DECISIONS.md
 
-### 1. Indexes
+1. Indexes
 
-I created a unique index on `employees.emp_code` to prevent duplicate employee codes. I also created a unique compound index on `attendance_logs.emp_code` and `date` to allow only one attendance record per employee per day. I would avoid a standalone index on a low-selectivity field such as status unless query performance measurements justified it.
+I created a unique index on employees.emp_code to prevent duplicate employee codes and a unique compound index on attendance_logs.emp_code and date to enforce one attendance record per employee per day. The joined_on index supports employee eligibility filtering, the attendance date-and-employee-code index supports listing and monthly filtering, and the department index supports department-trend queries. I would add further indexes only when query plans justify their read and write costs.
 
-### 2. Punch-in race
+2. Punch-in race
 
-Two identical punch-in requests may both pass the initial existence check. The unique compound index allows only one insert. The other insert raises `DuplicateKeyError`, which the API catches and converts to HTTP 409 Conflict. The unique indexes and sequential duplicate rejection have been verified. Simultaneous requests still need dedicated concurrency testing.
+Concurrent punch-in requests can both pass an initial existence check. The unique compound index allows only one insert; duplicate-key errors become HTTP 409 Conflict. A test with ten simultaneous requests returned one HTTP 201 and nine HTTP 409 responses.
 
-### 3. Ties
+3. Leaderboard ties
 
-The late-arrival leaderboard uses standard competition ranking. If employees tie at the limit, all employees whose rank is less than or equal to the limit should be returned, rather than splitting a tie. The tested leaderboard returned tied employees with the expected shared ranks.
+The leaderboard uses standard competition ranking. Employees with equal late-minute totals share a rank. Applying the limit to ranks rather than row count preserves ties at the cutoff.
 
-### 4. Headcount
+4. Department headcount
 
-The department summary starts from employees and uses an aggregation with attendance records. This keeps employees with no attendance logs in the headcount instead of excluding them. Tests verified inclusion of employees without logs and exclusion of employees joining after the reporting month.
+The department summary starts from employees and looks up attendance records, preserving employees with no logs. Tests verified inclusion of employees without attendance and exclusion of employees who joined after the reporting month.
 
-### 5. Scaling
+5. Scaling
 
-For 100 times more data, I would measure query plans and execution times, add indexes for demonstrated query patterns, and consider caching expensive analytics if necessary. The explain endpoint has been exercised for the five supported query patterns, but larger-scale performance testing remains necessary.
+For 100 times more data, I would measure execution statistics on representative datasets, inspect index usage, and benchmark latency. I would optimize demonstrated bottlenecks and consider caching expensive analytics if appropriate. Local explain tests use indexes for all five supported query patterns, but performance on 100,000 records still requires dedicated testing.
 
 ### 6. Punch-out calculations
 

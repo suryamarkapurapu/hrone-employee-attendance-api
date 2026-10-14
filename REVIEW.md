@@ -63,7 +63,7 @@ Additional defects will be added as they are verified and fixed.
 | 45 | `employee_monthly` | Ran executionStats for one employee and month. | Used the `uq_attendance_emp_code_date` index; the tested plan examined one key and one document. |
 | 46 | `department_summary` | Ran executionStats for the department summary aggregation. | Used `ix_employees_joined_on` for the employee scan and `uq_attendance_emp_code_date` in the lookup. No collection scans were reported in the lookup. |
 | 47 | `late_leaderboard` | Ran executionStats for the monthly late leaderboard. | Used `ix_attendance_date_desc_emp_code_asc` for attendance and `uq_employees_emp_code` for the employee lookup. No collection scans or disk spills were reported in the tested plan. |
-| 48 | `department_trend` | Ran executionStats for department `Testing`, from `2026-10-16` through `2026-10-19`. | Execution succeeded and returned four dates. The attendance lookup used `uq_attendance_emp_code_date`; no collection scans or disk spills were reported for that lookup and tested aggregation. The initial employee department filter used a collection scan. |
+| 48 | `department_trend` | Ran executionStats for department `Testing`, from `2026-10-16` through `2026-10-19`. | Execution succeeded and returned four dates. The attendance lookup used `uq_attendance_emp_code_date`; no collection scans or disk spills were reported for that lookup. After adding `ix_employees_department`, the tested plan used an index scan with no collection scans. |
 
 ## Additional helper boundary tests - 2026-10-14
 
@@ -91,4 +91,4 @@ These tests called the Python calculation helpers directly. They did not modify 
 | 66 | `GET /attendance` | Requested page 1 with `page_size=2` | Returned HTTP 200, two records in `items`, and `total=22`. Passed. |
 | 67 | `GET /attendance` | Filtered with `date_from=2026-10-14` and `date_to=2026-10-14` | Returned HTTP 200; all returned records matched the requested date range and `total` reflected the filtered results. Passed. |
 | 68 | `GET /attendance` | Set `date_from=2026-10-15` later than `date_to=2026-10-14` | Returned HTTP 422. Passed. |
-| 69 | `punch_in()` — omitted `punched_at` | When `punched_at` is omitted, the API must use the current time and create the attendance record successfully. | Created employee `EMPTESTDEF01`, then sent `POST /attendance/punch-in` with only `emp_code`. | The request succeeded and returned the attendance date `2026-10-14`, a millisecond epoch timestamp, status `PRESENT`, and calculated `late_minutes`. Passed. |
+| 69 | `POST /attendance/punch-in` — omitted `punched_at` | Created employee `EMPTESTDEF01`, then sent a punch-in request with only `emp_code`. | Returned HTTP 201 with attendance date `2026-10-14`, a millisecond epoch timestamp, status `PRESENT`, and calculated `late_minutes`. Passed. |

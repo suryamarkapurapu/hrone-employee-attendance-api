@@ -44,6 +44,10 @@ def create_indexes():
         [("joined_on", 1)],
         name="ix_employees_joined_on",
     )
+    db.employees.create_index(
+        [("department", 1)],
+        name="ix_employees_department",
+    )
 
     # Attendance: one record per employee per attendance date.
     db.attendance_logs.create_index(

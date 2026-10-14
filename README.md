@@ -47,12 +47,15 @@ Open Swagger UI at http://127.0.0.1:8000/docs.
 ## Implementation Status
 
 - Employee creation and listing are implemented.
-- Attendance punch-in and punch-out endpoints are implemented.
-- Attendance correction through PATCH is implemented, including validation and audit history.
-- Basic PATCH status corrections and validation cases have been tested through Swagger UI.
-- Remaining endpoint contract checks, analytics endpoints, concurrency cases, and boundary-condition tests still need verification.
+- Attendance punch-in, punch-out, listing, and correction through PATCH are implemented.
+- Attendance corrections include validation and append-only audit history.
+- Employee monthly analytics, department summary, late leaderboard, and department trend endpoints are implemented.
+- The five supported explain cases have been exercised using MongoDB execution statistics.
+- Health endpoint, Python syntax, API route registration, and Git whitespace checks have been verified.
+- Selected business rules and analytics cases have been tested through Swagger UI and direct helper checks.
+- Additional contract and edge-case verification remains necessary, particularly for concurrency, validation boundaries, and untested requirements.
 
-The implementation is still in progress; refer to `REVIEW.md` for verified defects and outstanding tests.
+See `REVIEW.md` for recorded findings, test evidence, and outstanding verification items.
 
 ## Submission
 

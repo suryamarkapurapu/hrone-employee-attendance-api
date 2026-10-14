@@ -1,4 +1,4 @@
-# REVIEW.md
+﻿# REVIEW.md
 
 List of defects found during review of the starter `app/main.py`.
 
@@ -80,3 +80,4 @@ These tests called the Python calculation helpers directly. They did not modify 
 | 55 | Half-day calculation | Duration of 269 minutes | `work_hours=4.48`, `half_day=true`. Passed. |
 | 56 | Half-day calculation | Duration of 270 minutes | `work_hours=4.50`, `half_day=false`. Passed. |
 | 57 | Half-day calculation | Duration of 271 minutes | `work_hours=4.52`, `half_day=false`. Passed. |
+| 58 | `POST /attendance/punch-out` | Punch-out exactly 270 minutes after punch-in | Returned HTTP 200, `work_hours=4.5`, `half_day=false`, and `overtime_minutes=0`. Passed. |

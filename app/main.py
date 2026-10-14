@@ -1,4 +1,4 @@
-"""
+﻿"""
 Employee Attendance & Analytics API - STARTER
 
 Run: uvicorn app.main:app --port 8000
@@ -310,14 +310,13 @@ def punch_in(body: PunchInIn):
                 status_code=422,
                 detail="punched_at is out of range"
             )
-
-    # 3. Derive the attendance date from the IST timestamp.
     # 3. Derive the attendance date using the employee's shift.
-        d = get_attendance_date(
-           ts,
-           emp["shift_start"],
-           emp["shift_end"]
-        )
+    d = get_attendance_date(
+        ts,
+        emp["shift_start"],
+        emp["shift_end"]
+    )
+
 
     # 4. Reject an existing attendance record for this employee and date.
     existing = db.attendance_logs.find_one({

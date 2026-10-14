@@ -205,7 +205,12 @@ class RegularizeRequest(BaseModel):
 # Health endpoint
 # --------------------------------------------------------------------------- #
 
-@app.get("/health")
+@app.get(
+    "/health",
+    responses={
+        503: {"description": "Database unavailable"}
+    }
+)
 def health():
     try:
         client.admin.command("ping")
@@ -221,7 +226,13 @@ def health():
 # Employee endpoints
 # --------------------------------------------------------------------------- #
 
-@app.post("/employees", status_code=201)
+@app.post(
+    "/employees",
+    status_code=201,
+    responses={
+        409: {"description": "emp_code already exists"}
+    }
+)
 def create_employee(body: EmployeeIn):
     if db.employees.find_one({"emp_code": body.emp_code}):
         raise HTTPException(
@@ -277,7 +288,14 @@ def list_employees(
 # Punch-in endpoint
 # --------------------------------------------------------------------------- #
 
-@app.post("/attendance/punch-in", status_code=201)
+@app.post(
+    "/attendance/punch-in",
+    status_code=201,
+    responses={
+        404: {"description": "Employee not found"},
+        409: {"description": "Already punched in for this date"}
+    }
+)
 def punch_in(body: PunchInIn):
     # 1. Validate that the employee exists.
     emp = db.employees.find_one({"emp_code": body.emp_code})
@@ -367,7 +385,13 @@ def punch_in(body: PunchInIn):
 
 
 
-@app.post("/attendance/punch-out")
+@app.post(
+    "/attendance/punch-out",
+    responses={
+        404: {"description": "Employee or punch-in record not found"},
+        409: {"description": "Already punched out"}
+    }
+)
 def punch_out(body: PunchOutIn):
     emp = db.employees.find_one({"emp_code": body.emp_code})
     if emp is None:
@@ -631,7 +655,13 @@ def list_attendance(
 # PATCH /attendance/{emp_code}/{date}
 # --------------------------------------------------------------------------- #
 
-@app.patch("/attendance/{emp_code}/{date}")
+@app.patch(
+    "/attendance/{emp_code}/{date}",
+    responses={
+        404: {"description": "Attendance record not found"},
+        409: {"description": "Conflicting attendance correction"}
+    }
+)
 def regularize_attendance(
     emp_code: str,
     date: str,
@@ -916,7 +946,12 @@ def regularize_attendance(
 # GET   /analytics/employees/{emp_code}/monthly
 
 
-@app.get("/analytics/employees/{emp_code}/monthly")
+@app.get(
+    "/analytics/employees/{emp_code}/monthly",
+    responses={
+        404: {"description": "Employee not found"}
+    }
+)
 def employee_monthly(emp_code: str, month: str):
     # Validate the required month format: YYYY-MM.
     if not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", month):
@@ -1419,7 +1454,12 @@ def late_leaderboard(
 # GET /analytics/departments/{department}/trend
 from fastapi import Query
 
-@app.get("/analytics/departments/{department}/trend")
+@app.get(
+    "/analytics/departments/{department}/trend",
+    responses={
+        404: {"description": "Department not found"}
+    }
+)
 def department_trend(
     department: str,
     from_date: str = Query(..., alias="from"),

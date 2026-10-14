@@ -87,3 +87,4 @@ These tests called the Python calculation helpers directly. They did not modify 
 | 62 | `POST /attendance/punch-out` | Punched out at 7:00 PM for a 9:30 AM–6:30 PM shift | Returned HTTP 200, `work_hours=9.5`, `overtime_minutes=30`, and `half_day=false`. Passed. |
 | 63 | `POST /attendance/punch-out` | Punched out 29 minutes after the 6:30 PM shift end | Returned HTTP 200, `work_hours=9.48`, `overtime_minutes=0`, and `half_day=false`. Passed. |
 | 64 | `POST /attendance/punch-in` | Overnight shift `22:00–06:00`; punched in at 5:59 AM IST on October 14 | Returned HTTP 201 with attendance date `2026-10-13`. Passed. |
+| 65 | `POST /attendance/punch-in` | Overnight shift `22:00–06:00`; punched in exactly at 6:00 AM IST on October 14 | Returned HTTP 201 with attendance date `2026-10-14`. Passed. |

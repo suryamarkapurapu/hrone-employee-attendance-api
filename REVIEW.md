@@ -84,3 +84,4 @@ These tests called the Python calculation helpers directly. They did not modify 
 | 59 | `POST /attendance/punch-in` | Submitted an epoch timestamp in seconds instead of milliseconds | Returned HTTP 422. Passed. |
 | 60 | `POST /attendance/punch-in` | Sent 10 concurrent requests for the same employee and attendance date | One request returned HTTP 201 and nine returned HTTP 409. Passed. |
 | 61 | `POST /attendance/punch-out` | Sent 10 concurrent requests for the same attendance record | One request returned HTTP 200 and nine returned HTTP 409. Passed. |
+| 62 | `POST /attendance/punch-out` | Punched out at 7:00 PM for a 9:30 AM–6:30 PM shift | Returned HTTP 200, `work_hours=9.5`, `overtime_minutes=30`, and `half_day=false`. Passed. |

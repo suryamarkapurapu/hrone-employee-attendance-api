@@ -89,3 +89,4 @@ These tests called the Python calculation helpers directly. They did not modify 
 | 64 | `POST /attendance/punch-in` | Overnight shift `22:00–06:00`; punched in at 5:59 AM IST on October 14 | Returned HTTP 201 with attendance date `2026-10-13`. Passed. |
 | 65 | `POST /attendance/punch-in` | Overnight shift `22:00–06:00`; punched in exactly at 6:00 AM IST on October 14 | Returned HTTP 201 with attendance date `2026-10-14`. Passed. |
 | 66 | `GET /attendance` | Requested page 1 with `page_size=2` | Returned HTTP 200, two records in `items`, and `total=22`. Passed. |
+| 67 | `GET /attendance` | Filtered with `date_from=2026-10-14` and `date_to=2026-10-14` | Returned HTTP 200; all returned records matched the requested date range and `total` reflected the filtered results. Passed. |

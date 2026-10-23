@@ -23,6 +23,7 @@ client = MongoClient(
 )
 db = client[os.getenv("MONGO_DB", "attendance_db")]
 
+
 IST = timezone(timedelta(hours=5, minutes=30))
 
 app = FastAPI(
